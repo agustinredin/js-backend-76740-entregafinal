@@ -4,8 +4,15 @@ const BASE_URL = 'http://localhost:8080/api'
 const router = Router();
 
 router.get('/', async (req, res) => {
-    const products = await fetch(BASE_URL + '/products').then(res => res.json());
-    res.render('index', { title: "Entrega Final", products: products.docs });
+    const limit = req.query.limit ? parseInt(req.query.limit) : 10
+    const page = req.query.page ? parseInt(req.query.page) : 1
+    const sort = req.query.sort == 'desc' ? {price: -1} : {price: 1}
+    
+    const query = req.query.query ? JSON.parse(req.query.query) : {}
+    const urlQuery = '?limit=' + limit + '&sort=' + (sort.price ? 'asc' :'desc') + '&query=' + JSON.stringify(query) + '&page=' + page
+
+    const products = await fetch(BASE_URL + '/products' + urlQuery).then(res => res.json());
+    res.render('index', { title: "Entrega Final", products: products.docs, nextLink: products.nextLink, prevLink: products.prevLink });
 });
 
 router.get('/products/:pid', async (req, res) => {

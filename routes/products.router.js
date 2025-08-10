@@ -22,8 +22,7 @@ router.get('/', async (req, res) => {
         const result = await ProductModel.paginate(query, { limit, page, sort });
         
         
-        const url = BASE_URL + '/products?limit=' + limit + '&sort=' + (sort.price ? 'asc' :'desc') + '&query=' + JSON.stringify(query)
-
+        const url = '?limit=' + limit + '&sort=' + (sort.price ? 'asc' :'desc') + '&query=' + JSON.stringify(query)
         const resultNextPrev = {
             ...result,
             status: "success",
