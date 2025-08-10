@@ -1,0 +1,28 @@
+<div class="flex flex-col w-full p-8">
+    <div class="flex">
+        <h1 class="text-4xl font-bold w-full">Detalles de tu carrito 
+        </h1>
+    </div>
+<p class="text-sm text-gray-500 w-full">ID interno: {{cart._id}}</p>
+                    <button onclick="deleteCart()" class="transition-all w-fit transition-duration-150 cursor-pointer text-sm bg-red-500 text-white my-2 px-2 py-1 rounded-md" >
+                Vaciar carrito
+            </button>
+<div class="flex flex-wrap w-full my-12">
+    {{#each cart.products}}
+    <div id="cart-product-{{this.product._id}}" class="border-l-blue-500 border-l-2 mt-2 pl-4 flex justify-between items-center ml-8">
+        <div>
+        <span>Cantidad: {{{this.quantity}}}</span>
+            <div class="flex gap-4 mb-2">
+                <p class="text-sm text-gray-500 w-fit">{{this.product.code}}</p>
+                    <button onclick="deleteFromCart('{{{this.product._id}}}')" class="cursor-pointer text-sm border-b-2 border-b-red-500 transition-all transition-duration hover:scale-[1.02]">Eliminar de carrito</button>
+            </div>
+            <h2>{{this.title}}</h2>
+            <p><span class="font-bold">Descripción:</span> {{this.product.description}}</p>
+            <p><span class="font-bold">Precio:</span> {{this.product.price}}</p>
+            <p><span class="font-bold">Categoría:</span> {{this.product.category}}</p>
+            <p><span class="font-bold">Stock:</span> {{this.product.stock}}</p>
+        </div>  
+    </div>
+    {{/each}}
+</div>  
+</div>

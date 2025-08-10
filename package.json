@@ -1,23 +1,28 @@
 {
-  "name": "js-backend-sandbox-76740",
+  "name": "js-backend-76740-entegafinal",
   "version": "1.0.0",
-  "description": "Backend testing w/ node.js - Coderhouse 76470",
+  "description": "Entrega final del curso de Coderhouse Backend I",
   "main": "app.js",
   "type": "module",
   "scripts": {
     "serve": "node ./app.js",
-    "start": "node server.js"
+    "start": "nodemon app.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "express": "^5.1.0",
-    "moment": "^2.30.1"
+    "express-handlebars": "^8.0.2",
+    "express-rate-limit": "^8.0.1",
+    "mongoose": "^8.17.1",
+    "mongoose-paginate-v2": "^1.9.1",
+    "socket.io": "^4.8.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.30.1",
     "eslint": "^9.30.1",
-    "globals": "^16.3.0"
+    "globals": "^16.3.0",
+    "nodemon": "^3.1.10"
   },
   "keywords": []
 }

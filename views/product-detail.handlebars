@@ -1,0 +1,17 @@
+<div class="flex flex-col h-screen w-full p-8">
+    <div class="flex flex-col w-full my-12 space-y-6 my-2">
+            <div id="product-{{product._id}}" class="border-l-green-500 border-l-2 mt-2 pl-4 flex justify-between items-center">
+                <div>
+                    <p class="text-sm text-gray-500 w-full">{{product.code}}</p>
+                    <h2>{{product.title}}</h2>
+                    <p><span class="font-bold">Descripción:</span> {{product.description}}</p>
+                    <p><span class="font-bold">Precio:</span> {{product.price}}</p>
+                    <p><span class="font-bold">Categoría:</span> {{product.category}}</p>
+                    <p><span class="font-bold">Stock:</span> {{product.stock}}</p>
+                    <div class="flex gap-2 my-2">
+                            <button onclick="addProductToCart('{{{product._id}}}')" class="cursor-pointer text-sm border-b-2 border-b-blue-500 transition-all transition-duration hover:scale-[1.02]">Agregar al carrito</button>
+                    </div>
+                </div>  
+            </div>
+    </div>
+</div>

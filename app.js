@@ -1,64 +1,57 @@
-import "./server.js"
-import './routes/carts.js' 
-import './routes/products.js' 
-// import CartsService from "./services/CartsService.js"
-// import ProductsService from "./services/ProductsService.js"
+import express from 'express'
+import handlebars from 'express-handlebars'
+import mongoose from 'mongoose'
+import viewsRouter from './routes/views.router.js'
+import productsRouter from './routes/products.router.js'
+import cartsRouter from './routes/carts.router.js'
+import rateLimit from 'express-rate-limit'
+import { Server } from 'socket.io'
 
-//entrega nro.1: /products y /carts,
-//usando SRP, herencia y convención de nombres.
-//Si bien la idea es testear mediante postman, a continuación hay datos de prueba para realizar unit tests a los servicios.
+process.loadEnvFile()
+const app = express()
+const port = 8080
 
-//  const serviceCarritos = new CartsService('./data/carts.json')
-//  const serviceProductos = new ProductsService('./data/products.json')
-//  const products = [{
-//         title: "Producto 1",
-//         description: "Descripción del producto 1",
-//         price: 100,
-//         code: "P001",
-//         stock: 10,
-//         category: "Categoría A",
-//         thumbnails: ['thumb1.png']
-//     },
-//     {
-//         title: "Producto 2",
-//         description: "Descripción del producto 2",
-//         price: 200,
-//         code: "P002",
-//         stock: 20,
-//         category: "Categoría B",
-//         thumbnails: []
-//     },
-//     {
-//         title: "Producto 3",
-//         description: "Descripción del producto 3",
-//         price: 300,
-//         code: "P003",
-//         stock: 30,
-//         category: "Categoría C",
-//         thumbnails: []
-//     }]
+mongoose.connect(process.env.MONGO_URI).then((db) => {
+    console.log('Conectado a MongoDB @:', db.connection.host)
+}).catch((err) => {
+    console.log('Error al conectar a MongoDB:', err)
+})
 
-// serviceCarritos.post({ products: products });
-// serviceCarritos.postProductInCart(1, 1, { quantity: 1 });
-// serviceCarritos.postProductInCart(1, 2, { quantity: 2 });
-// serviceCarritos.postProductInCart(1, 1, { quantity: 3 });
-// serviceCarritos.getById(1);
+app.use(express.json())
 
-// serviceProductos.post(productosPrueba[0]);
-// serviceProductos.post(productosPrueba[1]);
-// serviceProductos.post(productosPrueba[2]);
+//rate limit para evitar spam
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000, 
+    max: 100,                 
+    standardHeaders: 'draft-7',
+    legacyHeaders: false,      
+    message: { error: 'Too many requests' }
+  });
+  
+app.use(limiter);
 
-// serviceProductos.get();
+app.engine('handlebars', handlebars.engine());
+app.set('view engine', 'handlebars');
+app.set('views', './views');
+app.use(express.static('./public'));
 
-// serviceProductos.getById(2);
+app.use('/', viewsRouter);
+app.use('/api/products', productsRouter);
+app.use('/api/carts', cartsRouter);
 
-// serviceProductos.put(2, {
-//     title: "Producto 2 Modificado",
-//     description: "Nueva descripción",
-//     price: 250,
-//     stock: 15
-// });
+const server = app.listen(port)
+const io = new Server(server)
 
-// serviceProductos.delete(1);
+let cid = 0;
+io.on('connection', (socket) => {
+    console.log('WebSocket conn activa!')
 
-// serviceProductos.get();
+    socket.on('getActiveCart', () => {
+        socket.emit('activeCart', cid)
+    })
+
+    socket.on('setActiveCart', (idNuevo) => {
+        cid = idNuevo
+        socket.emit('activeCart', cid)
+    })
+})

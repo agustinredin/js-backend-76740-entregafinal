@@ -1,0 +1,28 @@
+<div class="flex flex-col w-full p-8">
+    <h1 class="text-4xl font-bold w-full">Bienvenido a la tienda</h1>
+    <p class="text-sm text-gray-500 w-full">Productos disponibles:</p>
+    <div class="flex flex-wrap w-full my-12 space-y-6 my-2">
+        {{#each products}}
+            <div id="product-{{this._id}}" class="mx-6 w-[480px] border-l-green-500 border-l-2 mt-2 pl-4 flex justify-between items-center">
+                <div class="w-full">
+                    <p class="text-sm text-gray-500 w-full">{{this.code}}</p>
+                    <h2>{{this.title}}</h2>
+                    <p class="w-3/4">{{this.description}}</p>
+                    <p>{{this.price}}</p>
+                    <div class="flex justify-between my-2">
+                        <div class="relative">
+                            {{#if this.stock}}
+                            <button onclick="addProductToCart('{{{this._id}}}')" class="cursor-pointer text-sm border-b-2 border-b-blue-500 transition-all transition-duration hover:scale-[1.02]">Agregar al carrito</button>
+                            <div class="absolute top-1 left-30 text-sm text-gray-500 w-full">{{this.stock}} disponibles</div>
+                            {{else}}
+                            <div class="absolute w-24 top-1 left-30 text-sm text-gray-500">Sin Stock</div>
+                            {{/if}}
+                        </div>
+                        <a href="/products/{{this._id}}" id="add-{{this._id}}" class="cursor-pointer text-sm border-2 border-slate-500 px-2 py-1 rounded-md">Ver detalle</a>
+                    </div>
+                </div>  
+            </div>
+        {{/each}}
+    </div>
+</div>
+

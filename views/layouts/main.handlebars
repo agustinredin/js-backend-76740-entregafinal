@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-commerce entrega final</title>
+    {{!-- tailwind 4 via cdn para estilos básicos --}}
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+
+</head>
+<body>
+    <main>
+        {{{body}}}
+        <a class="hidden transition-all transition-duration-150 absolute top-8 right-8 cursor-pointer text-sm border-2 border-slate-500 px-2 py-1 rounded-md" id="btn-carrito-activo">
+            Ver carrito 
+        </a>
+    </main>
+</body>
+
+<script src="/socket.io/socket.io.js"></script>
+<script type="text/javascript">
+    let cid = 0;
+    const socket = io();
+    socket.emit('getActiveCart');
+    
+    socket.on('activeCart', (activeCartId) => {
+        cid = activeCartId
+        //muestro el carrito que tiene el usuario.
+        //carga dinámica mediante vista de hbs mapeada al href
+        let botonCarrito = document.getElementById('btn-carrito-activo')
+        if (!botonCarrito) return
+
+        if (cid) {
+            botonCarrito.style.display = 'block'
+            botonCarrito.href = '/carts/' + cid
+        }
+        else {
+            botonCarrito.style.display = 'none'
+        }
+    })
+
+    async function addProductToCart (pid) {
+        let result = await fetch(`/api/carts/${cid}/products/${pid}`, {
+            method: 'POST'
+        }).then(res => res.json()).catch(err => console.log(err))
+
+        if (result.status == 'error') {
+            alert('Error agregando al carrito')
+            return
+        }
+
+        console.log(result)
+        cid = result.payload._id
+        socket.emit('setActiveCart', cid)
+        alert('Agregado al carrito!')
+    }
+
+    async function deleteCart() {
+        let result = await fetch(`/api/carts/${cid}`, {
+            method: 'DELETE'
+        }).then(res => res.json()).catch(err => console.log(err))
+
+        if (result.status == 'error') {
+            alert('Error vaciando el carrito')
+            return
+        }
+
+        alert('Carrito vaciado!')
+        window.location.href = '/'
+    }
+    
+    async function deleteFromCart(pid) {
+        let result = await fetch(`/api/carts/${cid}/products/${pid}`, {
+            method: 'DELETE'
+        }).then(res => res.json()).catch(err => console.log(err))
+
+        if (result.status == 'error') {
+            alert('Error eliminando el producto del carrito')
+            return
+        }
+
+        alert('Producto eliminado del carrito.')
+        const productElem = document.getElementById(`cart-product-${pid}`)
+        productElem.remove()
+    }
+</script>
+</html>
